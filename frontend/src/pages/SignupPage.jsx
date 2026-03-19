@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../api/axiosInstance';
 
 const SignupPage = () => {
@@ -46,11 +46,11 @@ const SignupPage = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:5000/api/auth/google';
+    window.location.href = 'https://zipgrade-v2.onrender.com/api/auth/google';
   };
 
   const handleZohoLogin = () => {
-    window.location.href = 'http://localhost:5000/api/auth/zoho';
+    window.location.href = 'https://zipgrade-v2.onrender.com/api/auth/zoho';
   };
 
   return (
