@@ -77,6 +77,15 @@ app.use((err, req, res, next) => {
   res.status(500).json({ success: false, error: 'Internal server error.' });
 });
 
+// Serve React build
+app.use(express.static(path.join(__dirname, "build")));
+
+// React routing support
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
+
+
 // ==================== START SERVER ====================
 
 app.listen(PORT, () => {
