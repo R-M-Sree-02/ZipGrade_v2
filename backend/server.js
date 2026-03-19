@@ -15,17 +15,18 @@ const authRoutes = require('./routes/auth.routes');
 const examRoutes = require('./routes/exam.routes');
 const omrRoutes = require('./routes/omr.routes');
 const resultRoutes = require('./routes/result.routes');
+const oauthRoutes = require('./routes/oauth.routes');
 
 const app = express();
 
-// ✅ IMPORTANT: use Render port
+// ✅ PORT (Render)
 const PORT = process.env.PORT || 10000;
 
-// Initialize DBManager
+// Initialize DB
 const db = new DBManager(pool);
 app.locals.db = db;
 
-// ==================== CREATE REQUIRED FOLDERS ====================
+// ==================== CREATE FOLDERS ====================
 
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
@@ -34,7 +35,6 @@ if (!fs.existsSync(uploadsDir)) {
 
 // ==================== MIDDLEWARE ====================
 
-// ✅ FIXED CORS (works for both local + production)
 app.use(cors({
   origin: true,
   credentials: true,
@@ -45,12 +45,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 
-// Serve uploaded files
+// Static uploads
 app.use('/uploads', express.static(uploadsDir));
 
 // ==================== API ROUTES ====================
 
+// ✅ Combine auth + oauth cleanly
 app.use('/api/auth', authRoutes);
+app.use('/api/auth', oauthRoutes);
+
 app.use('/api/exams', examRoutes);
 app.use('/api/omr', omrRoutes);
 app.use('/api/results', resultRoutes);
@@ -65,15 +68,12 @@ app.get('/api/health', (req, res) => {
 
 // ==================== SERVE FRONTEND ====================
 
-// Path to React build
 const buildPath = path.join(__dirname, 'build');
-
-// Serve static files
 app.use(express.static(buildPath));
 
 // ==================== ERROR HANDLING ====================
 
-// API 404 handler (ONLY for /api routes)
+// API 404 (only API)
 app.use('/api', (req, res) => {
   res.status(404).json({
     success: false,
@@ -81,7 +81,7 @@ app.use('/api', (req, res) => {
   });
 });
 
-// Global error handler
+// Global error
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
 
@@ -105,14 +105,13 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ==================== REACT ROUTING (LAST) ====================
+// ==================== REACT ROUTE (LAST) ====================
 
-// ⚠️ MUST BE LAST
 app.get('*', (req, res) => {
   res.sendFile(path.join(buildPath, 'index.html'));
 });
 
-// ==================== START SERVER ====================
+// ==================== START ====================
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
