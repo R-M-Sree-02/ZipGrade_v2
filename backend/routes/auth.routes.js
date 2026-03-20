@@ -31,7 +31,7 @@ router.get('/google/callback', authController.googleCallback);
 router.get('/zoho', authController.zohoRedirect);
 router.get('/zoho/callback', authController.zohoCallback);
 
-// Protected routes
+// Protected
 router.post('/logout', verifyToken, authController.logout);
 router.post('/refresh', authController.refreshAccessToken);
 router.get('/me', verifyToken, authController.getMe);
